@@ -1,0 +1,46 @@
+{
+  "patient": {
+    "id": "2JfZiePs2SmrH9sdoKBK",
+    "date": "2025-03-07T03:52:19.592Z"
+  },
+  "medical_reports": [
+    {
+      "summary": [
+        "- Dental Health Report",
+        "Patient Information",
+        "Name: John Doe",
+        "Age: 35",
+        "Gender: Male",
+        "Date of Examination: 05 March 2025",
+        "Examination Summary",
+        "- Dental caries detected in upper right molar.",
+        "- Mild gum inflammation (gingivitis) observed.",
+        "- No signs of periodontal disease.",
+        "- Wisdom teeth fully erupted with no complications.",
+        "- Moderate plaque buildup on lower incisors.",
+        "Test Results",
+        "X-Ray Findings: No fractures, minor cavities present.",
+        "Bite Analysis: Normal occlusion, slight overbite.",
+        "Oral pH Level: 6.8 (Normal range: 6.5 - 7.5)",
+        "Recommendations",
+        "- Schedule a deep cleaning session.",
+        "- Use fluoride toothpaste to prevent further cavities.",
+        "- Reduce sugar intake to minimize plaque buildup.",
+        "- Regular dental check-ups every 6 months.",
+        "Disclaimer: This report is generated for informational purposes only. Consult a licensed dentist for a comprehensive",
+        "diagnosis and treatment plan."
+      ],
+      "date": "2025-03-07T03:52:18.189Z"
+    }
+  ],
+  "xray_analyses": [
+    {
+      "detected_diseases": [
+        "fractured",
+        "impacted"
+      ],
+      "date": "2025-03-07T03:52:19.592Z"
+    }
+  ],
+  "disclaimer": "This report is generated for informational purposes only. Consult a licensed dentist for a comprehensive diagnosis and treatment plan."
+}
