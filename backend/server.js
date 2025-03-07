@@ -3,11 +3,16 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
+const { SpeechClient } = require("@google-cloud/speech");
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+const speechClient = new SpeechClient({
+    keyFilename: path.join(__dirname, "key.json"),
+});
 
 // Helper function to save Base64 audio file
 const saveAudioFile = (base64Data) => {
@@ -22,35 +27,42 @@ const saveAudioFile = (base64Data) => {
     return filePath;
 };
 
-// Speech-to-text endpoint
 app.post("/api/speech-to-text", async (req, res) => {
     try {
-        const { audioContent } = req.body;
+        const filePath = "temp_audio.wav";
 
-        if (!audioContent) {
-            return res.status(400).json({ error: "No audio content provided" });
+        if (!fs.existsSync(filePath)) {
+            return res.status(400).json({ error: "Audio file not found" });
         }
 
-        const filePath = saveAudioFile(audioContent);
-        console.log(`Audio saved: ${filePath} (Size: ${fs.statSync(filePath).size} bytes)`);
-
-        // Read the saved audio file
+        console.log(`Processing audio: ${filePath} (Size: ${fs.statSync(filePath).size} bytes)`);
         const audioBuffer = fs.readFileSync(filePath);
-        const audioBase64 = audioBuffer.toString("base64");
 
-        // Send request to Python API
-        const pythonApiUrl = "http://localhost:5001/api/speech-to-text";
-        const response = await axios.post(pythonApiUrl, { audioContent: audioBase64 });
-
-        return res.json({ 
-            transcript: response.data.transcript || "No speech detected.",
-            audioUrl: `http://localhost:5000/temp_audio.wav`,
+        const [response] = await speechClient.recognize({
+            config: {
+                encoding: "LINEAR16",
+                languageCode: "en-US",
+                model: "default",
+            },
+            audio: {
+                content: audioBuffer.toString("base64"),
+            },
         });
+
+        const transcript = response.results
+            ?.map((result) => result.alternatives[0]?.transcript)
+            .join(" ") || "No speech detected.";
+        
+        console.log(transcript);
+        return res.json({ transcript });
+
     } catch (error) {
         console.error("Speech-to-text error:", error);
         return res.status(500).json({ error: error.message });
     }
 });
+
+
 
 // Serve saved audio file for playback
 app.get("/temp_audio.wav", (req, res) => {
@@ -89,10 +101,13 @@ app.post("/api/feedback", async (req, res) => {
 
         // Log feedback (you can replace this with database storage if needed)
         const feedbackEntry = {
-            original_text,
+            detected_symptoms: original_text,
+            correct: false,
             correct_symptom,
             correct_treatment,
         };
+        console.log(feedbackEntry);
+        
 
         const response = await axios.post("https://792d-117-206-129-167.ngrok-free.app/feedback", feedbackEntry, {
             headers: { "Content-Type": "application/json" },

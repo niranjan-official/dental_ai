@@ -191,11 +191,11 @@ export default function PatientProfile({ params }: { params: { id: string } }) {
     const submitFeedback = async () => {
         if (!correctSymptom || !correctTreatment) return;
 
-        const response = await fetch("/api/feedback", {
+        const response = await fetch("http://localhost:5000/api/feedback", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                original_text: analyzedData?.treatment_suggestions,
+                original_text: analyzedData?.detected_symptoms,
                 correct_symptom: correctSymptom,
                 correct_treatment: correctTreatment,
             }),
@@ -475,9 +475,17 @@ export default function PatientProfile({ params }: { params: { id: string } }) {
                                     <p>{analyzedData.treatment_suggestions}</p>
 
                                     {/* Feedback Buttons */}
-                                    <div className="mt-4 flex gap-2">
-                                        <Button variant="outline">
+                                    <div className="mt-4 flex items-center gap-3">
+                                        <span >
                                             Was this useful?
+                                        </span>
+                                        <Button
+                                          
+                                            onClick={() =>
+                                                setShowFeedbackForm(true)
+                                            }
+                                        >
+                                            Yes
                                         </Button>
                                         <Button
                                             variant="destructive"
